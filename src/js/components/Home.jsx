@@ -1,97 +1,58 @@
-import React, { useState } from "react";
+import { useState } from "react";
+
 
 const Home = () => {
-	const [tasks, setTasks] = useState([]);
-	const [inputValue, setInputValue] = useState("");
-	const [hovered, setHovered] = useState(null);
+  const [todos, setTodos] = useState([]);
+  const [input, setInput] = useState("");
 
-	const handleKeyDown = (e) => {
-		if (e.key === "Enter") {
-			e.preventDefault(); // 🔴 evita pantalla en blanco
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && input.trim() !== "") {
+      setTodos([...todos, input]);
+      setInput("");
+    }
+  };
 
-			if (inputValue.trim() !== "") {
-				setTasks([...tasks, inputValue.trim()]);
-				setInputValue("");
-			}
-		}
-	};
+  const deleteTodo = (index) => {
+    setTodos(todos.filter((_, i) => i !== index));
+  };
 
-	const deleteTask = (index) => {
-		setTasks(tasks.filter((_, i) => i !== index));
-	};
+  return (
+    <div className="container">
+      <h1>todos</h1>
 
-	return (
-		<div className="container">
-			<div className="row justify-content-center mt-5">
-				<div className="col-12 col-md-8 col-lg-6">
+      <ul className="todo-list">
+        <li>
+          <input
+            type="text"
+            placeholder="¿Qué necesitas hacer?"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+          />
+        </li>
 
-					{/* TITLE 4GEEKS STYLE */}
-					<h1
-						className="text-center fw-light"
-						style={{
-							fontSize: "100px",
-							color: "#EAD7D7"
-						}}
-					>
-						todos
-					</h1>
+        {todos.length === 0 ? (
+          <li className="empty">No hay tareas, añadir tareas</li>
+        ) : (
+          todos.map((todo, index) => (
+            <li key={index} className="task">
+              {todo}
+              <span
+                className="delete"
+                onClick={() => deleteTodo(index)}
+              >
+                ✖
+              </span>
+            </li>
+          ))
+        )}
+      </ul>
 
-					{/* LIST */}
-					<ul className="list-group shadow">
-
-						{/* INPUT */}
-						<li className="list-group-item">
-							<input
-								type="text"
-								className="form-control border-0"
-								placeholder="What needs to be done?"
-								value={inputValue}
-								onChange={(e) => setInputValue(e.target.value)}
-								onKeyDown={handleKeyDown}
-							/>
-						</li>
-
-						{/* EMPTY STATE */}
-						{tasks.length === 0 ? (
-							<li className="list-group-item text-muted">
-								No hay tareas, añadir tareas
-							</li>
-						) : (
-							tasks.map((task, index) => (
-								<li
-									key={index}
-									className="list-group-item d-flex justify-content-between"
-									onMouseEnter={() => setHovered(index)}
-									onMouseLeave={() => setHovered(null)}
-								>
-									{task}
-
-									{/* DELETE ON HOVER */}
-									{hovered === index && (
-										<span
-											onClick={() => deleteTask(index)}
-											style={{
-												cursor: "pointer",
-												color: "#cc9a9a"
-											}}
-										>
-											✕
-										</span>
-									)}
-								</li>
-							))
-						)}
-
-						{/* COUNTER */}
-						<li className="list-group-item text-muted small">
-							{tasks.length} item{tasks.length !== 1 ? "s" : ""} left
-						</li>
-
-					</ul>
-				</div>
-			</div>
-		</div>
-	);
+      <div className="footer">
+        {todos.length} tarea{todos.length !== 1 ? "s" : ""} pendiente{todos.length !== 1 ? "s" : ""}
+      </div>
+    </div>
+  );
 };
 
 export default Home;
